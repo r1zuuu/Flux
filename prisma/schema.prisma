@@ -8,7 +8,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
 // --- MODELE NEXTAUTH ---
 
 model User {
@@ -19,25 +18,26 @@ model User {
   image         String?
   accounts      Account[] // To są konta social login (np. Google/GitHub)
   sessions      Session[]
-  
+
   // Relacje biznesowe (Finanse)
   plaidItems        PlaidItem[]
   financialAccounts FinancialAccount[]
+  categories        Category[]
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -63,25 +63,48 @@ model VerificationToken {
 // --- MODELE FINANSOWE (FLUX) ---
 
 model PlaidItem {
-  id           String   @id @default(cuid())
-  accessToken  String   @unique
-  itemId       String   @unique
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now())
+  id          String   @id @default(cuid())
+  accessToken String   @unique
+  itemId      String   @unique
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
 }
 
 model FinancialAccount {
-  id                String   @id @default(cuid())
-  plaidAccountId    String   @unique
-  name              String
-  type              String
-  subtype           String?
-  mask              String?
-  currentBalance    Decimal  @db.Decimal(19, 4)
-  availableBalance  Decimal? @db.Decimal(19, 4)
-  currency          String   @default("PLN")
-  userId            String
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id               String        @id @default(cuid())
+  plaidAccountId   String        @unique
+  name             String
+  type             String
+  subtype          String?
+  mask             String?
+  currentBalance   Decimal       @db.Decimal(19, 4)
+  availableBalance Decimal?      @db.Decimal(19, 4)
+  currency         String        @default("PLN")
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions     Transaction[]
 }
 
+model Transaction {
+  id                 String           @id @default(cuid())
+  amount             Decimal          @db.Decimal(19, 4)
+  date               DateTime
+  payee              String?
+  notes              String?
+  accountId          String
+  account            FinancialAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  categoryId         String?
+  category           Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  // Jeśli transakcja pochodzi z Plaid
+  plaidTransactionId String?          @unique
+  createdAt          DateTime         @default(now())
+}
+
+model Category {
+  id           String        @id @default(cuid())
+  name         String
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+}

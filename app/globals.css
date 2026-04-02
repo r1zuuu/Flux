@@ -82,3 +82,58 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+@keyframes aurora {
+  from {
+    background-position: 70% 50%, 70% 50%;
+  }
+  to {
+    background-position: 350% 50%, 350% 50%;
+  }
+}
+
+.aurora-bg {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--background);
+}
+
+.aurora-bg::before,
+.aurora-bg::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  inset: 0;
+}
+
+.aurora-bg::before {
+  background-image:
+    repeating-linear-gradient(
+      30deg,
+      color-mix(in oklab, var(--background) 94%, rgb(136, 136, 136)) 10%,
+      color-mix(in oklab, var(--card) 90%, black) 16%,
+      color-mix(in oklab, var(--background) 94%, rgb(255, 255, 255)) 22%,
+      color-mix(in oklab, var(--card) 90%, rgb(255, 255, 255)) 12%
+    ),
+    repeating-linear-gradient(
+      30deg,
+      color-mix(in oklab, var(--foreground) 50%, transparent) 0%,
+      color-mix(in oklab, var(--muted-foreground) 22%, transparent) 8%,
+      color-mix(in oklab, var(--foreground) 12%, transparent) 16%,
+      color-mix(in oklab, var(--muted-foreground) 24%, transparent) 24%,
+      color-mix(in oklab, var(--foreground) 15%, transparent) 32%
+    );
+  background-size: 300% 200%, 200% 200%;
+  background-position: 20% 50%, 10% 50%;
+  filter: blur(10px);
+  opacity: 0.7;
+  mix-blend-mode: screen;
+  animation: aurora 40s linear infinite;
+}
+
+.aurora-bg::after {
+  background:
+    radial-gradient(circle at center, transparent 35%, color-mix(in oklab, var(--background) 85%, black) 75%);
+  z-index: 1;
+}

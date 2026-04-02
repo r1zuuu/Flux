@@ -2,57 +2,57 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/app
 import { Input } from "@/app/components/ui/input"
 import { Button } from "@/app/components/ui/button"
 import { SiGoogle, SiGithub } from "react-icons/si";
-
+import { login } from "@/app/actions/auth-actions";
 export default async function LoginPage() {
     return (
-        <div className="min-h-screen w-full flex items-center justify-center bg-background p-4">
-            <Card className="w-full max-w-[450px] bg-card border-border shadow-xl">
-                <CardHeader className="text-center">
-                    <CardTitle className="text-2xl font-bold tracking-tight">Login</CardTitle>
-                    <CardDescription className="text-muted-foreground">
-                        Enter your credentials to access your account or use one of the following providers to sign in.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="space-y-3">
-                        
-                        <Input type="email" placeholder="Email" />
-                        <Input type="password" placeholder="Password" />
-
-                    </div>
-                    
-                    <Button className="w-full">Sign In</Button>
-                    
-                    <div className="relative">
-
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-border"></div>
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-2 bg-card text-muted-foreground">or</span>
+        <div className="aurora-bg relative min-h-screen w-full px-4 py-8 sm:px-6">
+            <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-md items-center justify-center">
+                <Card className="w-full border-white/10 bg-white/5 shadow-[0_24px_70px_-20px_rgba(0,0,0,0.85)] backdrop-blur-2xl">
+                    <CardHeader className="space-y-2 text-center">
+                        <CardTitle className="text-3xl font-semibold tracking-tight">Sign In</CardTitle>
+                        <CardDescription className="mx-auto max-w-sm text-sm text-zinc-300">
+                            Enter your credentials to access your account.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-5">
+                        <div className="flex flex-col gap-4">
+                            <div className="flex flex-col space-y-2">
+                                <p className="text-sm font-medium text-zinc-100">Email</p>
+                                <Input type="email" placeholder="you@example.com" className="h-11 border-white/15 bg-white/5 text-zinc-100 placeholder:text-zinc-400" />
+                            </div>
+                            <div className="flex flex-col space-y-2">
+                                <p className="text-sm font-medium text-zinc-100">Password</p>
+                                <Input type="password" minLength={8}  placeholder="••••••••" className="h-11 border-white/15 bg-white/5 text-zinc-100 placeholder:text-zinc-400" />
+                            </div>
                         </div>
 
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-3">
+                        <Button className="h-11 w-full bg-white text-zinc-900 transition-colors hover:bg-zinc-200">Sign In</Button>
 
-                        <Button variant="outline" className="w-full">
-                            <SiGithub className="mr-2 h-4 w-4" />
-                            GitHub
-                        </Button>
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-white/15" />
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="bg-transparent px-3 text-zinc-400">or</span>
+                            </div>
+                        </div>
 
-                        <Button variant="outline" className="w-full">
-                            <SiGoogle className="mr-2 h-4 w-4" />
-                            Google
-                        </Button>
+                        <div className="grid grid-cols-2 gap-3">
+                            <Button variant="outline" className="h-12 w-full border-white/15 bg-white/5 text-zinc-100 hover:bg-white">
+                                <SiGithub className="h-4 w-4" />
+                            </Button>
 
-                    </div>
-                    
-                    <p className="text-center text-sm text-muted-foreground">
-                        Don't have an account? <a href="/register" className="text-primary hover:underline font-medium">Sign up</a>
-                    </p>
-                </CardContent>
-            </Card>
+                            <Button variant="outline" className="h-12 w-full border-white/15 bg-white/5 text-zinc-100 hover:bg-white">
+                                <SiGoogle className="h-4 w-4" />
+                            </Button>
+                        </div>
+
+                        <p className="text-center text-sm text-zinc-400">
+                            Don&apos;t have an account? <a href="/register" className="font-medium text-zinc-100 hover:text-white hover:underline">Sign up</a>
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     )
 }
