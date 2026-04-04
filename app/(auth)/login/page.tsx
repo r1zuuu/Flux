@@ -9,16 +9,26 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { LoginSchema } from "@/app/schemas";
-import { useState } from "react";
 import { useTransition } from "react";
 
+
 export default function LoginPage() {
-    const { register, handleSubmit, formState: { errors }} = useForm({
+    const [isPending, startTransition] = useTransition();
+    const { register, handleSubmit, formState: { errors }, setError} = useForm({
         resolver: zodResolver(LoginSchema),
     });
 
-    const testHandler = (data: any) => {
-        console.log("dziala " + data.email + " " + data.password  + " " + JSON.stringify(errors));
+    // const testHandler = (data: any) => {
+    //     console.log("dziala " + data.email + " " + data.password  + " " + JSON.stringify(errors));
+    // }
+
+    const onSubmit = (data: z.infer<typeof LoginSchema>) => {
+        startTransition( async () => {
+           const result = await login(data)
+           if( result?.error ){
+                setError("email", { message: result.error });
+           }
+        });
     }
     
     return (
@@ -32,7 +42,7 @@ export default function LoginPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-5">
-                        <form onSubmit={handleSubmit(testHandler)}>
+                        <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="flex flex-col gap-4">
                                 <div className="flex flex-col space-y-2">
                                     <p className="text-sm font-medium text-zinc-100">Email</p>
@@ -46,8 +56,9 @@ export default function LoginPage() {
                                 </div>
                             </div>
 
-                            <Button className="h-12 w-full bg-white text-zinc-900 transition-colors hover:bg-zinc-200">Sign In</Button>
-                            
+                            <Button className="h-12 w-full bg-white text-zinc-900 transition-colors hover:bg-zinc-200" disabled={isPending}>
+                                Sign In
+                            </Button>
                         </form>
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center">
@@ -69,7 +80,7 @@ export default function LoginPage() {
                         </div>
 
                         <p className="text-center text-sm text-zinc-400">
-                            Don&apos;t have an account? <a href="/register" className="font-medium text-zinc-100 hover:text-white hover:underline">Sign up</a>
+                            Don't have an account? <a href="/register" className="font-medium text-zinc-100 hover:text-white hover:underline">Sign up</a>
                         </p>
                     </CardContent>
                 </Card>
