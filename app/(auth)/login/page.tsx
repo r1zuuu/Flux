@@ -11,7 +11,7 @@ import { z } from "zod";
 import { LoginSchema } from "@/app/schemas";
 import { useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { getSession } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 
 
 export default function LoginPage() {
@@ -33,17 +33,32 @@ export default function LoginPage() {
         redirectLoggedUser();
     }, [router]);
 
-    // const testHandler = (data: any) => {
-    //     console.log("dziala " + data.email + " " + data.password  + " " + JSON.stringify(errors));
-    // }
-
     const onSubmit = (data: z.infer<typeof LoginSchema>) => {
         startTransition( async () => {
            const result = await login(data)
-           if( result?.error ){
+           if (result?.error) {
                 setError("email", { message: result.error });
            }
+           if (result?.success) {
+                // Use client-side signIn to create the session and redirect
+                const signInResult = await signIn("credentials", {
+                    email: data.email,
+                    password: data.password,
+                    redirect: false,
+                });
+
+                if (signInResult?.error) {
+                    setError("email", { message: "Invalid login credentials" });
+                } else {
+                    router.push("/dashboard");
+                    router.refresh();
+                }
+           }
         });
+    }
+
+    const handleOAuthSignIn = (provider: "github" | "google") => {
+        signIn(provider, { callbackUrl: "/dashboard" });
     }
     
     return (
@@ -71,8 +86,8 @@ export default function LoginPage() {
                                 </div>
                             </div>
 
-                            <Button className="h-12 w-full bg-white text-zinc-900 transition-colors hover:bg-zinc-200" disabled={isPending}>
-                                Sign In
+                            <Button className="mt-4 h-12 w-full bg-white text-zinc-900 transition-colors hover:bg-zinc-200" disabled={isPending}>
+                                {isPending ? "Signing in..." : "Sign In"}
                             </Button>
                         </form>
                         <div className="relative">
@@ -85,11 +100,23 @@ export default function LoginPage() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
-                            <Button variant="outline" className="h-12 w-full border-white/15 bg-white/5 text-zinc-100 hover:bg-white">
+                            <Button 
+                                type="button"
+                                variant="outline" 
+                                className="h-12 w-full border-white/15 bg-white/5 text-zinc-100 hover:bg-white"
+                                onClick={() => handleOAuthSignIn("github")}
+                                disabled={isPending}
+                            >
                                 <SiGithub className="h-4 w-4" />
                             </Button>
 
-                            <Button variant="outline" className="h-12 w-full border-white/15 bg-white/5 text-zinc-100 hover:bg-white">
+                            <Button 
+                                type="button"
+                                variant="outline" 
+                                className="h-12 w-full border-white/15 bg-white/5 text-zinc-100 hover:bg-white"
+                                onClick={() => handleOAuthSignIn("google")}
+                                disabled={isPending}
+                            >
                                 <SiGoogle className="h-4 w-4" />
                             </Button>
                         </div>

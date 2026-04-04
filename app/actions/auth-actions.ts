@@ -1,25 +1,30 @@
 "use server";
-import { signIn } from "next-auth/react";
 import * as z from "zod";
 import { LoginSchema } from "@/app/schemas";
+import db from "@/lib/db";
+
 
 export const login = async (data: z.infer<typeof LoginSchema>) => {
     const validatedFields = LoginSchema.safeParse(data);
 
     if (!validatedFields.success) {
-        throw new Error("Invalid input data");
+        return { error: "Invalid input data" };
     }
     const { email, password } = validatedFields.data;
-try {
-    await signIn("credentials", {
-      email,
-      password,
-      redirectTo: "/dashboard",
-    });
 
-  } catch (error) {
-    {
-      return { error: "Invalid login credentials" };
+    try {
+
+        const user = await db.user.findUnique({
+            where: { email },
+        });
+
+        if (!user) {
+            return { error: "Invalid login credentials" };
+        }
+
+
+        return { success: true };
+    } catch (error) {
+        return { error: "Something went wrong" };
     }
-}
 }
