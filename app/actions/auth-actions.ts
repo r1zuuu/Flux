@@ -7,7 +7,7 @@ export const login = async (data: z.infer<typeof LoginSchema>) => {
     const validatedFields = LoginSchema.safeParse(data);
 
     if (!validatedFields.success) {
-        throw new Error("Invalid login credentials");
+        throw new Error("Invalid input data");
     }
     const { email, password } = validatedFields.data;
 try {
@@ -19,7 +19,7 @@ try {
 
   } catch (error) {
     {
-          return { error: "Błędne dane logowania!" };
+      return { error: "Invalid login credentials" };
     }
 }
 }

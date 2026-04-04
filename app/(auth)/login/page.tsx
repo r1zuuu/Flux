@@ -9,14 +9,29 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { LoginSchema } from "@/app/schemas";
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { getSession } from "next-auth/react";
 
 
 export default function LoginPage() {
+    const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const { register, handleSubmit, formState: { errors }, setError} = useForm({
         resolver: zodResolver(LoginSchema),
     });
+
+    useEffect(() => {
+        const redirectLoggedUser = async () => {
+            const session = await getSession();
+
+            if (session) {
+                router.push("/dashboard");
+            }
+        };
+
+        redirectLoggedUser();
+    }, [router]);
 
     // const testHandler = (data: any) => {
     //     console.log("dziala " + data.email + " " + data.password  + " " + JSON.stringify(errors));
