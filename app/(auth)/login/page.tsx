@@ -17,7 +17,7 @@ import { signIn, getSession } from "next-auth/react";
 export default function LoginPage() {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
-    const { register, handleSubmit, formState: { errors }, setError} = useForm({
+    const { register, handleSubmit, formState: { errors }, setError } = useForm({
         resolver: zodResolver(LoginSchema),
     });
 
@@ -26,7 +26,7 @@ export default function LoginPage() {
             const session = await getSession();
 
             if (session) {
-                router.push("/dashboard");
+                router.push("/transactions");
             }
         };
 
@@ -34,12 +34,12 @@ export default function LoginPage() {
     }, [router]);
 
     const onSubmit = (data: z.infer<typeof LoginSchema>) => {
-        startTransition( async () => {
-           const result = await login(data)
-           if (result?.error) {
+        startTransition(async () => {
+            const result = await login(data)
+            if (result?.error) {
                 setError("email", { message: result.error });
-           }
-           if (result?.success) {
+            }
+            if (result?.success) {
                 // Use client-side signIn to create the session and redirect
                 const signInResult = await signIn("credentials", {
                     email: data.email,
@@ -50,17 +50,17 @@ export default function LoginPage() {
                 if (signInResult?.error) {
                     setError("email", { message: "Invalid login credentials" });
                 } else {
-                    router.push("/dashboard");
+                    router.push("/transactions");
                     router.refresh();
                 }
-           }
+            }
         });
     }
 
     const handleOAuthSignIn = (provider: "github" | "google") => {
-        signIn(provider, { callbackUrl: "/dashboard" });
+        signIn(provider, { callbackUrl: "/transactions" });
     }
-    
+
     return (
         <div className="aurora-bg relative min-h-screen w-full px-4 py-8 sm:px-6">
             <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-md items-center justify-center">
@@ -77,12 +77,12 @@ export default function LoginPage() {
                                 <div className="flex flex-col space-y-2">
                                     <p className="text-sm font-medium text-zinc-100">Email</p>
                                     <Input {...register("email")} type="email" placeholder="you@example.com" className="h-11 border-white/15 bg-white/5 text-zinc-100 placeholder:text-zinc-400" />
-                                    { errors.email && <p className="text-sm text-red-500">{errors.email.message}</p> }
+                                    {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
                                 </div>
                                 <div className="flex flex-col space-y-2">
                                     <p className="text-sm font-medium text-zinc-100">Password</p>
                                     <Input {...register("password")} type="password" placeholder="••••••••" className="h-11 border-white/15 bg-white/5 text-zinc-100 placeholder:text-zinc-400" />
-                                    { errors.password && <p className="text-sm text-red-500">{errors.password.message}</p> }
+                                    {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
                                 </div>
                             </div>
 
@@ -100,9 +100,9 @@ export default function LoginPage() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
-                            <Button 
+                            <Button
                                 type="button"
-                                variant="outline" 
+                                variant="outline"
                                 className="h-12 w-full border-white/15 bg-white/5 text-zinc-100 hover:bg-white"
                                 onClick={() => handleOAuthSignIn("github")}
                                 disabled={isPending}
@@ -110,9 +110,9 @@ export default function LoginPage() {
                                 <SiGithub className="h-4 w-4" />
                             </Button>
 
-                            <Button 
+                            <Button
                                 type="button"
-                                variant="outline" 
+                                variant="outline"
                                 className="h-12 w-full border-white/15 bg-white/5 text-zinc-100 hover:bg-white"
                                 onClick={() => handleOAuthSignIn("google")}
                                 disabled={isPending}

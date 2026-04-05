@@ -9,7 +9,7 @@ export default withAuth(
     const { nextUrl } = req;
 
     // define paths that should be protected and require authentication
-    const isDashboardRoute = nextUrl.pathname.startsWith("/dashboard");
+    const isDashboardRoute = nextUrl.pathname.startsWith("/transactions");
 
     if (isDashboardRoute && !isLoggedIn) {
       return NextResponse.redirect(new URL("/login", nextUrl));
