@@ -26,7 +26,7 @@ export default function LoginPage() {
             const session = await getSession();
 
             if (session) {
-                router.push("/transactions");
+                router.push("/onboarding");
             }
         };
 
@@ -50,7 +50,7 @@ export default function LoginPage() {
                 if (signInResult?.error) {
                     setError("email", { message: "Invalid login credentials" });
                 } else {
-                    router.push("/transactions");
+                    router.push("/onboarding");
                     router.refresh();
                 }
             }
@@ -58,7 +58,7 @@ export default function LoginPage() {
     }
 
     const handleOAuthSignIn = (provider: "github" | "google") => {
-        signIn(provider, { callbackUrl: "/transactions" });
+        signIn(provider, { callbackUrl: "/onboarding" });
     }
 
     return (

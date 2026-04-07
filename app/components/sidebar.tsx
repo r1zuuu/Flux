@@ -6,6 +6,9 @@ import PlaceholderPfp from '@/public/pfp-placeholder.jpg'
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { CiLogout } from "react-icons/ci";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 interface SidebarProps {
     user?: {
         name?: string | null;
@@ -15,6 +18,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ user }: SidebarProps) {
+    const router = useRouter();
     const routes = [
         { label: "Dashboard", icon: MdDashboard, href: "/dashboard" },
         { label: "Transactions", icon: GrTransaction, href: "/transactions" },
@@ -22,12 +26,18 @@ export default function Sidebar({ user }: SidebarProps) {
     ];
     const pathname = usePathname();
 
+    const handleLogout = () => {
+        signOut();
+        router.push('/login'); //dodac w middleware zeby nie mozna bylo wejsc na dashboard po wylogowaniu
+    }
+
     return (
         <div className="w-64 h-screen bg-background p-4">
             <div className="flex flex-col text-black gap-8 justify-center">
                 <div className="flex flex-row gap-2 items-center text-white ">
                     <Image src={user?.image || PlaceholderPfp} alt="Profile" width={40} height={40} className="w-10 h-10 rounded-full" />
                     <h1 className="font-bold">{user?.name}</h1>
+                    <button onClick={handleLogout}><CiLogout /></button>
                 </div>
                 <hr />
                 <div className="flex flex-col gap-4">

@@ -63,12 +63,13 @@ model VerificationToken {
 // --- MODELE FINANSOWE (FLUX) ---
 
 model PlaidItem {
-  id          String   @id @default(cuid())
-  accessToken String   @unique
-  itemId      String   @unique
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
+  id                String             @id @default(cuid())
+  accessToken       String             @unique
+  itemId            String             @unique
+  userId            String
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime           @default(now())
+  financialAccounts FinancialAccount[]
 }
 
 model FinancialAccount {
@@ -84,6 +85,9 @@ model FinancialAccount {
   userId           String
   user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   transactions     Transaction[]
+  //Relacja z plaidem zeby po usunieciu konta bankowego usunelo sie tez z plaid
+  plaidItemId      String?
+  plaidItem        PlaidItem?    @relation(fields: [plaidItemId], references: [id], onDelete: Cascade)
 }
 
 model Transaction {

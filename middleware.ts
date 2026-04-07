@@ -8,12 +8,21 @@ export default withAuth(
     const isLoggedIn = !!req.nextauth.token;
     const { nextUrl } = req;
 
-    // define paths that should be protected and require authentication
-    const isDashboardRoute = nextUrl.pathname.startsWith("/transactions");
+    const isDashboardRoute =
+      nextUrl.pathname.startsWith("/transactions") ||
+      nextUrl.pathname.startsWith("/dashboard");
 
+    // nie zalogowany chron dostep do dashboardu
     if (isDashboardRoute && !isLoggedIn) {
       return NextResponse.redirect(new URL("/login", nextUrl));
     }
+
+    // zalogowany to wyrzucaj z onboardingu
+    if (isLoggedIn && nextUrl.pathname === "/login") {
+      return NextResponse.redirect(new URL("/onboarding", nextUrl));
+    }
+
+    // TODO: when user already has bank connection, skip onboarding
 
     return NextResponse.next();
   },
