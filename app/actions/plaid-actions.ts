@@ -15,8 +15,8 @@ export default async function createPlaidLinkToken() {
         },
         client_name: 'Flux Finance',
         products: ['auth', 'transactions'] as Products[],
-        country_codes: ['PL'] as CountryCode[],
-        language: 'pl',
+        country_codes: ['US'] as CountryCode[],
+        language: 'en',
     }
     try {
         const response = await plaidClient.linkTokenCreate(request);
@@ -26,3 +26,56 @@ export default async function createPlaidLinkToken() {
         throw new Error('Failed to create Plaid link token');
     }
 }
+
+
+export const exchangePublicToken = async (publicToken: string) => {
+    const session = await auth();
+    const userId = session?.user?.id;
+
+    if (!userId) return { error: "Brak autoryzacji" };
+
+    try {
+        // 1. Wymiana public_token na access_token
+        const exchangeResponse = await plaidClient.itemPublicTokenExchange({
+            public_token: publicToken,
+        });
+
+        const accessToken = exchangeResponse.data.access_token;
+        const itemId = exchangeResponse.data.item_id;
+
+        // 2. Pobranie szczegółów kont, które użytkownik właśnie wybrał
+        const accountsResponse = await plaidClient.accountsGet({
+            access_token: accessToken,
+        });
+
+        const accounts = accountsResponse.data.accounts;
+
+        await db.$transaction(async (tx) => {
+            const plaidItem = await tx.plaidItem.create({
+                data: {
+                    accessToken,
+                    itemId,
+                    userId,
+                },
+            });
+            await tx.financialAccount.createMany({
+                data: accounts.map((account) => ({
+                    plaidAccountId: account.account_id,
+                    name: account.name,
+                    type: account.type,
+                    subtype: account.subtype,
+                    mask: account.mask,
+                    currentBalance: account.balances.current || 0,
+                    availableBalance: account.balances.available || 0,
+                    userId: userId,
+                    plaidItemId: plaidItem.id,
+                })),
+            });
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error("Błąd podczas wymiany tokena:", error);
+        return { error: "Nie udało się zsynchronizować konta bankowego" };
+    }
+};
