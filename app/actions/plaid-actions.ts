@@ -1,5 +1,6 @@
 "use server"
 import { auth } from "@/app/auth";
+import db from "@/lib/db";
 import { plaidClient } from "@/lib/plaid";
 import { CountryCode, Products } from "plaid";
 
@@ -35,7 +36,6 @@ export const exchangePublicToken = async (publicToken: string) => {
     if (!userId) return { error: "Brak autoryzacji" };
 
     try {
-        // 1. Wymiana public_token na access_token
         const exchangeResponse = await plaidClient.itemPublicTokenExchange({
             public_token: publicToken,
         });
@@ -43,7 +43,7 @@ export const exchangePublicToken = async (publicToken: string) => {
         const accessToken = exchangeResponse.data.access_token;
         const itemId = exchangeResponse.data.item_id;
 
-        // 2. Pobranie szczegółów kont, które użytkownik właśnie wybrał
+
         const accountsResponse = await plaidClient.accountsGet({
             access_token: accessToken,
         });

@@ -1,14 +1,30 @@
 "use client";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { PlaidLinkOnSuccess, PlaidLinkOnExit, PlaidLinkOptions, usePlaidLink } from "react-plaid-link";
+import { useRouter } from "next/navigation";
+import { exchangePublicToken } from "@/app/actions/plaid-actions"
 
 export default function OnboardingClient({ linkToken }: { linkToken: string }) {
-
-    const onSuccess = useCallback<PlaidLinkOnSuccess>((public_token, metadata) => {
-        console.log("Public Token:", public_token);
-        console.log("Metadata:", metadata);
-        // TODO: wyslac public token do serwera i otrzymac z a to acces token
-    }, []);
+    const router = useRouter()
+    const [isLoading, setIsLoading] = useState(false)
+    const onSuccess = useCallback<PlaidLinkOnSuccess>(async (public_token, metadata) => {
+        setIsLoading(true)
+        try {
+            const result = await exchangePublicToken(public_token)
+            if (result.success) {
+                router.refresh()
+                router.push("/dashboard")
+            } else if (result.error) {
+                alert(result.error)
+            }
+        }
+        catch (err) {
+            console.error(err)
+        }
+        finally {
+            setIsLoading(false)
+        }
+    }, [router]);
 
     const onExit = useCallback<PlaidLinkOnExit>((error, metadata) => {
         console.log("Exit Error:", error);
@@ -27,7 +43,7 @@ export default function OnboardingClient({ linkToken }: { linkToken: string }) {
         <div>
             <h1>Onboarding</h1>
             <button onClick={() => open()} disabled={!ready}>
-                Połącz konto bankowe
+                {isLoading ? "Ladowanie..." : "Polacz konto bankowe"}
             </button>
         </div>
     );
