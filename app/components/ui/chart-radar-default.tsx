@@ -1,4 +1,3 @@
-// @/app/components/ui/chart-radar-default.tsx
 "use client"
 
 import { Label, PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts"

@@ -3,6 +3,15 @@ import db from "@/lib/db";
 import { notFound, redirect } from "next/navigation";
 import { formatCurrency, generateMockAnalytics } from "@/lib/utils";
 import { ChartRadarDefault } from "@/app/components/ui/chart-radar-default";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    SelectGroup,
+} from "@/components/ui/select"
+import MonthCard from "@/app/components/MonthCard";
 export default async function DetailPage({ params }: { params: Promise<{ accountId: string }> }) {
     const { accountId } = await params
     const session = await auth()
@@ -31,28 +40,9 @@ export default async function DetailPage({ params }: { params: Promise<{ account
 
             <div className="mt-8">
                 <h2 className="text-xl font-bold mb-4">Expenses Summary</h2>
-                <p className="text-gray-600 mb-4">Average monthly expenses: <span className="font-semibold text-black">{formatCurrency(analyticsData.averageMonthlySpending)}</span></p>
+                <p className="text-gray-600 mb-8 text-sm">Average monthly expenses: <span className="font-semibold text-black">{formatCurrency(analyticsData.averageMonthlySpending)}</span></p>
 
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-4">
-                    {analyticsData.history.slice(0, 3).map((month, index) => {
-                        const radarData = month.categoryBreakdown.map(c => ({
-                            category: c.name,
-                            amount: c.value
-                        }));
-
-                        return (
-                            <div key={index} className="p-5 border rounded-xl shadow-sm bg-zinc-700">
-                                <h3 className="font-bold text-lg mb-3 capitalize text-center text-white">{month.month} {month.year}</h3>
-                                <ChartRadarDefault
-                                    title="Expenses Structure"
-                                    description="Expenses breakdown by category"
-                                    data={radarData}
-                                    label="Expenses"
-                                />
-                            </div>
-                        );
-                    })}
-                </div>
+                <MonthCard history={analyticsData.history.slice(0, 12)} />
             </div>
         </div>
     )
