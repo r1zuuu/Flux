@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Inter, EB_Garamond } from "next/font/google";
 import "./globals.css";
 import AuthSessionProvider from "@/app/components/providers/session-provider";
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-poppins",
+  variable: "--font-inter",
 });
 
+const ebGaramond = EB_Garamond({
+  subsets: ["latin"],
+  variable: "--font-eb-garamond",
+});
 
 export const metadata: Metadata = {
-  title: "Flux - Your Finance Dashboard",
-  description: "Manage your finances effortlessly with Flux.",
+  title: "Flux - Private Wealth Management",
+  description: "Secure and elegant financial oversight.",
 };
 
 export default function RootLayout({
@@ -21,11 +24,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`dark ${poppins.variable} h-full antialiased`}>
-      <body className="min-h-full bg-zinc-950 text-zinc-100 font-sans">
+    <html lang="en" className={`light ${inter.variable} ${ebGaramond.variable} h-full antialiased`}>
+      <body className="min-h-full bg-background text-foreground font-sans selection:bg-primary/20 selection:text-foreground">
         <AuthSessionProvider>{children}</AuthSessionProvider>
       </body>
     </html>
   );
 }
-

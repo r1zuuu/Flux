@@ -5,11 +5,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Fonty - upewnij się, że w layout.tsx masz zmienną --font-poppins */
-  --font-sans: var(--font-poppins), ui-sans-serif, system-ui;
-  --font-heading: var(--font-poppins);
+  /* Fonts */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui;
+  --font-serif: "Apple Garamond", var(--font-eb-garamond), "Playfair Display", Garamond, serif;
+  --font-heading: "Apple Garamond", var(--font-eb-garamond), "Playfair Display", Garamond, serif;
 
-  /* Kolory mapowane na zmienne CSS */
+  /* CSS Variables mapping */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   
@@ -29,48 +30,49 @@
   --color-accent-foreground: var(--accent-foreground);
 
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--foreground);
+  --color-destructive-foreground: var(--destructive-foreground);
 
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
+  --radius-xl: calc(var(--radius) * 1.5);
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-sm: calc(var(--radius) * 0.6);
 }
 
 :root {
-  /* Czysty "Premium Dark" - tło prawie czarne, ale z lekkim odcieniem */
-  --background: oklch(0.12 0.01 285); 
-  --foreground: oklch(0.98 0.01 285);
+  /* Classic private banking palette */
+  --background: oklch(0.965 0.018 83);
+  --foreground: oklch(0.225 0.012 90);
 
-  /* Karty nieco jaśniejsze od tła dla efektu warstwowości */
-  --card: oklch(0.16 0.01 285);
-  --card-foreground: oklch(0.98 0.01 285);
+  --card: oklch(0.985 0.012 83);
+  --card-foreground: oklch(0.225 0.012 90);
 
-  /* Popover jak karty */
-  --popover: oklch(0.16 0.01 285);
-  --popover-foreground: oklch(0.98 0.01 285);
+  --popover: oklch(0.985 0.012 83);
+  --popover-foreground: oklch(0.225 0.012 90);
 
-  /* Primary to Twój kolor akcji - w FinTechach czysta biel lub mocny szmaragd */
-  --primary: oklch(0.98 0.01 285); 
-  --primary-foreground: oklch(0.12 0.01 285);
+  --primary: oklch(0.315 0.055 154);
+  --primary-foreground: oklch(0.975 0.014 83);
 
-  /* Muted - dla tekstów pomocniczych, szary o niskim kontraście */
-  --muted: oklch(0.25 0.01 285);
-  --muted-foreground: oklch(0.65 0.01 285);
+  --secondary: oklch(0.39 0.045 255);
+  --secondary-foreground: oklch(0.975 0.014 83);
 
-  /* Accent - do podświetleń w menu / hoverów */
-  --accent: oklch(0.25 0.01 285);
-  --accent-foreground: oklch(0.98 0.01 285);
+  --muted: oklch(0.915 0.018 83);
+  --muted-foreground: oklch(0.48 0.018 92);
 
-  /* Border i Input - subtelne linie */
-  --border: oklch(0.25 0.01 285);
-  --input: oklch(0.25 0.01 285);
-  --ring: oklch(0.98 0.01 285);
+  --accent: oklch(0.69 0.075 82);
+  --accent-foreground: oklch(0.245 0.018 90);
 
-  --radius: 0.75rem;
+  --destructive: oklch(0.48 0.13 28);
+  --destructive-foreground: oklch(0.975 0.014 83);
+
+  --border: oklch(0.805 0.026 82);
+  --input: oklch(0.88 0.018 83);
+  --ring: oklch(0.315 0.055 154);
+
+  --radius: 0.25rem;
 }
 
 @layer base {
@@ -81,59 +83,4 @@
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
-}
-
-@keyframes aurora {
-  from {
-    background-position: 70% 50%, 70% 50%;
-  }
-  to {
-    background-position: 350% 50%, 350% 50%;
-  }
-}
-
-.aurora-bg {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  background: var(--background);
-}
-
-.aurora-bg::before,
-.aurora-bg::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-  inset: 0;
-}
-
-.aurora-bg::before {
-  background-image:
-    repeating-linear-gradient(
-      30deg,
-      color-mix(in oklab, var(--background) 94%, rgb(136, 136, 136)) 10%,
-      color-mix(in oklab, var(--card) 90%, black) 16%,
-      color-mix(in oklab, var(--background) 94%, rgb(255, 255, 255)) 22%,
-      color-mix(in oklab, var(--card) 90%, rgb(255, 255, 255)) 12%
-    ),
-    repeating-linear-gradient(
-      30deg,
-      color-mix(in oklab, var(--foreground) 50%, transparent) 0%,
-      color-mix(in oklab, var(--muted-foreground) 22%, transparent) 8%,
-      color-mix(in oklab, var(--foreground) 12%, transparent) 16%,
-      color-mix(in oklab, var(--muted-foreground) 24%, transparent) 24%,
-      color-mix(in oklab, var(--foreground) 15%, transparent) 32%
-    );
-  background-size: 300% 200%, 200% 200%;
-  background-position: 20% 50%, 10% 50%;
-  filter: blur(10px);
-  opacity: 0.7;
-  mix-blend-mode: screen;
-  animation: aurora 40s linear infinite;
-}
-
-.aurora-bg::after {
-  background:
-    radial-gradient(circle at center, transparent 35%, color-mix(in oklab, var(--background) 85%, black) 75%);
-  z-index: 1;
 }

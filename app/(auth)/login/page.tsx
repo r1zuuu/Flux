@@ -40,7 +40,6 @@ export default function LoginPage() {
                 setError("email", { message: result.error });
             }
             if (result?.success) {
-                // Use client-side signIn to create the session and redirect
                 const signInResult = await signIn("credentials", {
                     email: data.email,
                     password: data.password,
@@ -62,70 +61,91 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="aurora-bg relative min-h-screen w-full px-4 py-8 sm:px-6">
-            <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-md items-center justify-center">
-                <Card className="w-full border-white/10 bg-white/5 shadow-[0_24px_70px_-20px_rgba(0,0,0,0.85)] backdrop-blur-2xl">
-                    <CardHeader className="space-y-2 text-center">
-                        <CardTitle className="text-3xl font-semibold tracking-tight">Sign In</CardTitle>
-                        <CardDescription className="mx-auto max-w-sm text-sm text-zinc-300">
-                            Enter your credentials to access your account.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-5">
-                        <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="flex flex-col gap-4">
-                                <div className="flex flex-col space-y-2">
-                                    <p className="text-sm font-medium text-zinc-100">Email</p>
-                                    <Input {...register("email")} type="email" placeholder="you@example.com" className="h-11 border-white/15 bg-white/5 text-zinc-100 placeholder:text-zinc-400" />
-                                    {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
-                                </div>
-                                <div className="flex flex-col space-y-2">
-                                    <p className="text-sm font-medium text-zinc-100">Password</p>
-                                    <Input {...register("password")} type="password" placeholder="••••••••" className="h-11 border-white/15 bg-white/5 text-zinc-100 placeholder:text-zinc-400" />
-                                    {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
-                                </div>
-                            </div>
+        <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden flex items-center justify-center z-0">
+                <div className="text-[30vw] font-heading font-black text-secondary/40 whitespace-nowrap tracking-tighter opacity-10 uppercase mix-blend-screen">FLUX</div>
+            </div>
 
-                            <Button className="mt-4 h-12 w-full bg-white text-zinc-900 transition-colors hover:bg-zinc-200" disabled={isPending}>
-                                {isPending ? "Signing in..." : "Sign In"}
-                            </Button>
-                        </form>
-                        <div className="relative">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-white/15" />
-                            </div>
-                            <div className="relative flex justify-center text-sm">
-                                <span className="bg-transparent px-3 text-zinc-400">or</span>
-                            </div>
+            <div className="relative z-10 w-full max-w-[440px] group">
+                <div className="absolute inset-0 bg-primary translate-x-2 translate-y-2 -z-10 transition-transform duration-300 group-hover:translate-x-3 group-hover:translate-y-3"></div>
+                
+                <div className="w-full border-2 border-border bg-card p-8 sm:p-10 transition-colors group-hover:border-primary">
+                    <div className="space-y-4 text-center mb-10">
+                        <div className="w-16 h-16 mx-auto bg-foreground text-background flex items-center justify-center font-heading font-black text-3xl mb-6">
+                            F
                         </div>
-
-                        <div className="grid grid-cols-2 gap-3">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="h-12 w-full border-white/15 bg-white/5 text-zinc-100 hover:bg-white"
-                                onClick={() => handleOAuthSignIn("github")}
-                                disabled={isPending}
-                            >
-                                <SiGithub className="h-4 w-4" />
-                            </Button>
-
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="h-12 w-full border-white/15 bg-white/5 text-zinc-100 hover:bg-white"
-                                onClick={() => handleOAuthSignIn("google")}
-                                disabled={isPending}
-                            >
-                                <SiGoogle className="h-4 w-4" />
-                            </Button>
-                        </div>
-
-                        <p className="text-center text-sm text-zinc-400">
-                            Don't have an account? <a href="/register" className="font-medium text-zinc-100 hover:text-white hover:underline">Sign up</a>
+                        <h1 className="text-4xl sm:text-5xl font-black tracking-tighter font-heading text-foreground uppercase">ACCESS</h1>
+                        <p className="text-xs text-muted-foreground uppercase font-bold tracking-[0.2em]">
+                            Enter secure gateway
                         </p>
-                    </CardContent>
-                </Card>
+                    </div>
+
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        <div className="space-y-5">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-foreground uppercase tracking-widest block">Identity (Email)</label>
+                                <input 
+                                    {...register("email")} 
+                                    type="email" 
+                                    placeholder="OPERATIVE@FLUX.COM" 
+                                    className="w-full h-12 px-4 border-2 border-border bg-background text-foreground text-sm font-bold uppercase tracking-widest focus:outline-none focus:border-primary transition-colors placeholder:text-muted-foreground/50" 
+                                />
+                                {errors.email && <p className="text-xs font-bold text-destructive uppercase tracking-wider">{errors.email.message}</p>}
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-foreground uppercase tracking-widest block">Passkey</label>
+                                <input 
+                                    {...register("password")} 
+                                    type="password" 
+                                    placeholder="••••••••" 
+                                    className="w-full h-12 px-4 border-2 border-border bg-background text-foreground text-sm font-bold tracking-widest focus:outline-none focus:border-primary transition-colors placeholder:text-muted-foreground/50" 
+                                />
+                                {errors.password && <p className="text-xs font-bold text-destructive uppercase tracking-wider">{errors.password.message}</p>}
+                            </div>
+                        </div>
+
+                        <button 
+                            type="submit"
+                            className="w-full h-14 bg-primary text-primary-foreground font-black text-sm uppercase tracking-[0.2em] hover:bg-foreground hover:text-background transition-colors disabled:opacity-50 border-2 border-transparent hover:border-border" 
+                            disabled={isPending}
+                        >
+                            {isPending ? "AUTHENTICATING..." : "INITIATE SEQUENCE"}
+                        </button>
+                    </form>
+
+                    <div className="mt-8 mb-8 relative flex items-center justify-center">
+                        <div className="absolute w-full border-t-2 border-border"></div>
+                        <span className="relative bg-card px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">External Subroutines</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <button
+                            type="button"
+                            className="h-12 border-2 border-border bg-background text-foreground hover:bg-foreground hover:text-background transition-colors flex items-center justify-center gap-3"
+                            onClick={() => handleOAuthSignIn("github")}
+                            disabled={isPending}
+                        >
+                            <SiGithub className="text-lg" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Github</span>
+                        </button>
+
+                        <button
+                            type="button"
+                            className="h-12 border-2 border-border bg-background text-foreground hover:bg-foreground hover:text-background transition-colors flex items-center justify-center gap-3"
+                            onClick={() => handleOAuthSignIn("google")}
+                            disabled={isPending}
+                        >
+                            <SiGoogle className="text-lg" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Google</span>
+                        </button>
+                    </div>
+
+                    <div className="mt-10 text-center">
+                        <p className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">
+                            Unregistered? <a href="/register" className="text-primary hover:text-foreground transition-colors ml-2 underline decoration-2 underline-offset-4">Enroll Now</a>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     )
